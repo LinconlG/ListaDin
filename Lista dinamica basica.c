@@ -3,42 +3,39 @@
 #include <time.h>
 
 
-struct no {
+struct no{
 	int dado;
-	struct no *prox; //Apontará para o proximo nó
+	struct no *prox;
 };
-
-typedef struct no *pont; // "ponteiro do tipo no" faz a alocação dinâmica na memória para cada novo elemento da lista.
-pont procura; // "variavel do tipo ponteiro" A partir dela poderemos navegar do primeiro ao último elemento, fazer remoções e inserções.
-
+//--------------
+typedef struct no *pont;
+pont navegador;
 int op;
-
-
-//Prototipando
-void inserir(pont procura);
-void remover(pont procura);
-void mostrar(pont procura);
+//-------------
+void mostrar(pont arg);
+void inserir(pont arg);
+void remover(pont arg);
 void menu();
-
-//PROGRAMA******
+//programa
 int main(){
-	srand(time(NULL));  //inicializa a função de numeros aleatorios
-	procura = (pont) malloc(sizeof(struct no));
-	procura->dado = 0;  //primeiro dado [VARIAVEL GLOBAL (1)]
-	procura->prox = NULL;
 	
-	while(op != 4){
+	srand(time(NULL));
+	
+	navegador = (pont) malloc(sizeof(struct no));
+	navegador->dado = 0;
+	navegador->prox = NULL;
+	
+	while(op != 3){
 		
+		mostrar(navegador);
 		menu();
 		
 		switch(op){
-			case 1: inserir(procura);
+			case 1: inserir(navegador);
 				break;
-			case 2: remover(procura);
+			case 2: remover(navegador);
 				break;
-			case 3: mostrar(procura);
-				break;
-			case 4:	
+			case 3:	
 				break;
 			default: printf("\n Resposta invalida, por favor insira uma resposta valida...\n\n");
 					system("pause");
@@ -46,76 +43,78 @@ int main(){
 		}		
 	}
 	
-	
 	return 0;
 }
-
-
-
-//FUNÇÕES***
-
+//Funções****************
 void menu(){
 	
-	printf("\n\n****************************************\n \n 1-Inserir dado na lista    2-Remover dado da lista\n 3-Mostrar lista            4-Sair \n\n Resposta: ");
+	printf("\n****************************************\n \n 1-Inserir dado na lista    2-Remover dado da lista\n         3-Sair \n\n Resposta: ");
 	scanf("%d", &op);
 	fflush(stdin);
-	system("cls");
 	printf("\n\n");
 }
-
-//---------------------------------
-void inserir(pont procura){ /* Teoria= A variavel global(1) é diferente da do escopo da função(2): quando altera 2, o 1 NÃO é alterado [por valor], porém a variavel é um ponteiro e
-								 dentro da função é alocado um lugar na memória para cada dado inserido, por meio de endereços e não variaveis, são acessados.*/
-	while(procura->prox != NULL){
+//------------------------
+void inserir(pont arg){
+	
+	while(arg->prox != NULL){
 		
-		procura=procura->prox;
+		arg = arg->prox;
 	}
 	
-	procura->prox=(pont) malloc(sizeof(struct no));
-	procura = procura->prox;
-	printf("\n...\n");
-	procura->dado = rand()%100;
-	procura->prox=NULL;
-	printf("\nINSERIDO\n\n ");
-	system("pause");
+	arg->prox = (pont) malloc(sizeof(struct no));
+	arg = arg->prox;
+	arg->dado = rand()%100;
+	arg->prox = NULL;
+	
 	system("cls");
 }
-//-------------------------------
-void remover(pont procura){
+
+//------------------------
+void mostrar(pont arg){
+	
+	while(arg->prox != NULL){
+		
+		printf(" %d;", arg->dado);
+		
+		arg = arg->prox;
+	}
+	
+	printf(" %d;", arg->dado);
+	printf("\n");
+}
+//------------------------
+void remover(pont arg){
+	
 	int d;
-	pont atual;
+	pont antecessor;
+	
 	printf("\nQual dado deseja remover? ");
-	scanf("%d", &d);	
+	scanf("%d", &d);
 	fflush(stdin);
 	
-	atual = (pont) malloc(sizeof(struct no));
-	
-	while(procura->dado != d){
+	while(arg->dado != d){
 		
-		if(procura->prox == NULL){
+		if(arg->prox != NULL){		
+		
+			antecessor = arg;
+			arg = arg->prox;
+		}
+		else
+		{
+			printf("\nNAO ENCONTRADO\n");
+			system("pause\n");
 			break;
 		}
-		
-		atual = procura;
-		procura = procura->prox;
 	}
 	
-	if(procura->dado == d){
+	if(arg->dado == d)
+	{
+		
+		antecessor->prox = arg->prox;
+		free(arg);
+	}
 
-		atual->prox=procura->prox;
-	}	
-}
-//------------------------------
-void mostrar(pont procura){
 	
-	while(1){
-		
-		printf(" %d; ", procura->dado);
-		if(procura->prox == NULL){
-			break;
-		}
-		procura = procura->prox;
-	}
-	printf("\n\n");
-	system("pause");
+	system("cls");
 }
+
